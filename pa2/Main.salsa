@@ -13,7 +13,10 @@ behavior Main{
   String theatersFile = "";//"theatersFile.txt";// Default location for list of theaters (1st cmd line argument)
                                                 // List of ip addr:port separated by newlines
   String nameServer = "127.0.0.1:3030";         // Default name server (2nd cmd line argument))
-  public static boolean isDebug = true;       // Additional output for debugging (set to false when testing autograding)
+  public static boolean isDebug = false;       // Additional output for debugging (set to false when testing autograding)
+
+  private Vector nodes = new Vector();
+  int numNodes;
 
   void act(String args[]){
     int argc = args.length;
@@ -35,7 +38,7 @@ behavior Main{
     
     int n = Integer.parseInt(n_string);
     
-    int numNodes = (int) Math.pow(2,n);
+    numNodes = (int) Math.pow(2,n);
 
     // read available theaters
     Vector theaters = new Vector();
@@ -64,7 +67,7 @@ behavior Main{
           standardOutput<-println("Creating node "+uan_str+" at "+ual_str);
         }
 
-		// TODO: Create the new node
+        nodes.add(new Node(i) at (new UAN(uan_str), new UAL(ual_str)));
       }
     }
     else{
@@ -73,7 +76,19 @@ behavior Main{
         if (isDebug){
           standardOutput<-println("Creating node "+i+" locally");
         }
-        // TODO: Create the new node
+        nodes.add(new Node(i));
+      }
+    }
+
+    // Initialize connections to other nodes for each node
+    for (int i = 0; i < numNodes; i++) {
+      //standardOutput<-println("adding connections for node " + i);
+      
+      Map connections;
+      for (int j = 0; j < n; j++) {
+        int val = (int) (i + Math.pow(2, j)) % (int) Math.pow(2, n);
+        //standardOutput<-println("Connection to " + String.valueOf(val));
+        nodes.get(i)<-addConnection(val, nodes.get(val));
       }
     }
    
@@ -99,7 +114,9 @@ behavior Main{
         int fromNode = Integer.parseInt(tokens[1]);
         String key = tokens[2];
         String value = tokens[3];
-		// TODO: Do something with the parsed insert
+        
+        int location = Hash(key, numNodes);
+        nodes.get(fromNode)<-insert(key, value, location);
         break;
       }
       case "query":{
@@ -110,7 +127,9 @@ behavior Main{
         int queryID = Integer.parseInt(tokens[1]);
         int fromNode = Integer.parseInt(tokens[2]);
         String key = tokens[3];
-		// TODO: Do something with the parsed query
+
+        int location = Hash(key, numNodes);
+        nodes.get(fromNode)<-query(queryID, key, location, fromNode);
         break;
       }
       default:

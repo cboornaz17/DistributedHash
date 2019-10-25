@@ -35,7 +35,7 @@ import java.io.*;
 import java.util.*;
 import java.lang.Math;
 
-public class Main extends UniversalActor  {
+public class Node extends UniversalActor  {
 	public static void main(String args[]) {
 		UAN uan = null;
 		UAL ual = null;
@@ -70,7 +70,7 @@ public class Main extends UniversalActor  {
 			ual = new UAL( ServiceFactory.getTheater().getLocation() + System.getProperty("identifier"));
 		}
 		RunTime.receivedMessage();
-		Main instance = (Main)new Main(uan, ual,null).construct();
+		Node instance = (Node)new Node(uan, ual,null).construct();
 		gc.WeakReference instanceRef=new gc.WeakReference(uan,ual);
 		{
 			Object[] _arguments = { args };
@@ -83,18 +83,18 @@ public class Main extends UniversalActor  {
 		RunTime.finishedProcessingMessage();
 	}
 
-	public static ActorReference getReferenceByName(UAN uan)	{ return new Main(false, uan); }
-	public static ActorReference getReferenceByName(String uan)	{ return Main.getReferenceByName(new UAN(uan)); }
-	public static ActorReference getReferenceByLocation(UAL ual)	{ return new Main(false, ual); }
+	public static ActorReference getReferenceByName(UAN uan)	{ return new Node(false, uan); }
+	public static ActorReference getReferenceByName(String uan)	{ return Node.getReferenceByName(new UAN(uan)); }
+	public static ActorReference getReferenceByLocation(UAL ual)	{ return new Node(false, ual); }
 
-	public static ActorReference getReferenceByLocation(String ual)	{ return Main.getReferenceByLocation(new UAL(ual)); }
-	public Main(boolean o, UAN __uan)	{ super(false,__uan); }
-	public Main(boolean o, UAL __ual)	{ super(false,__ual); }
-	public Main(UAN __uan,UniversalActor.State sourceActor)	{ this(__uan, null, sourceActor); }
-	public Main(UAL __ual,UniversalActor.State sourceActor)	{ this(null, __ual, sourceActor); }
-	public Main(UniversalActor.State sourceActor)		{ this(null, null, sourceActor);  }
-	public Main()		{  }
-	public Main(UAN __uan, UAL __ual, Object obj) {
+	public static ActorReference getReferenceByLocation(String ual)	{ return Node.getReferenceByLocation(new UAL(ual)); }
+	public Node(boolean o, UAN __uan)	{ super(false,__uan); }
+	public Node(boolean o, UAL __ual)	{ super(false,__ual); }
+	public Node(UAN __uan,UniversalActor.State sourceActor)	{ this(__uan, null, sourceActor); }
+	public Node(UAL __ual,UniversalActor.State sourceActor)	{ this(null, __ual, sourceActor); }
+	public Node(UniversalActor.State sourceActor)		{ this(null, null, sourceActor);  }
+	public Node()		{  }
+	public Node(UAN __uan, UAL __ual, Object obj) {
 		//decide the type of sourceActor
 		//if obj is null, the actor must be the startup actor.
 		//if obj is an actorReference, this actor is created by a remote actor
@@ -117,7 +117,7 @@ public class Main extends UniversalActor  {
 			      setSource(sourceActor.getUAN(), sourceActor.getUAL());
 			      activateGC();
 			    }
-			    createRemotely(__uan, __ual, "pa2.Main", sourceRef);
+			    createRemotely(__uan, __ual, "pa2.Node", sourceRef);
 			  }
 
 			  // local creation
@@ -175,6 +175,12 @@ public class Main extends UniversalActor  {
 		}
 	}
 
+	public UniversalActor construct (int i) {
+		Object[] __arguments = { new Integer(i) };
+		this.send( new Message(this, this, "construct", __arguments, null, null) );
+		return this;
+	}
+
 	public UniversalActor construct() {
 		Object[] __arguments = { };
 		this.send( new Message(this, this, "construct", __arguments, null, null) );
@@ -182,11 +188,11 @@ public class Main extends UniversalActor  {
 	}
 
 	public class State extends UniversalActor .State {
-		public Main self;
+		public Node self;
 		public void updateSelf(ActorReference actorReference) {
-			((Main)actorReference).setUAL(getUAL());
-			((Main)actorReference).setUAN(getUAN());
-			self = new Main(false,getUAL());
+			((Node)actorReference).setUAL(getUAL());
+			((Node)actorReference).setUAN(getUAN());
+			self = new Node(false,getUAL());
 			self.setUAN(getUAN());
 			self.setUAL(getUAL());
 			self.activateGC();
@@ -206,7 +212,7 @@ public class Main extends UniversalActor  {
 
 		public State(UAN __uan, UAL __ual) {
 			super(__uan, __ual);
-			addClassName( "pa2.Main$State" );
+			addClassName( "pa2.Node$State" );
 			addMethodsForClasses();
 		}
 
@@ -267,206 +273,84 @@ public class Main extends UniversalActor  {
 			}
 		}
 
-		String theatersFile = "";
-		String nameServer = "127.0.0.1:3030";
-		boolean isDebug = false;
-		Vector nodes = new Vector();
-		int numNodes;
+		TreeMap connections = new TreeMap();
+		String uan_str = "";
+		String ual_str = "";
+		int id;
+		TreeMap items = new TreeMap();
+		void construct(int i){
+			id = i;
+		}
+		public void addConnection(int node, Node n) {
+			connections.put(node, n);
+		}
 		public void act(String args[]) {
 			int argc = args.length;
-			if (argc>=1) {theatersFile = args[0];
-}			if (argc>=2) {nameServer = args[1];
-}			if (argc>=3) {isDebug = Boolean.parseBoolean(args[2]);
-}			if (isDebug) {			{
-				// standardOutput<-print("Enter n: ")
-				{
-					Object _arguments[] = { "Enter n: " };
-					Message message = new Message( self, standardOutput, "print", _arguments, null, null );
-					__messages.add( message );
-				}
-			}
-}			Token n = new Token("n");
-			{
-				// token n = standardInput<-readLine()
-				{
-					Object _arguments[] = {  };
-					Message message = new Message( self, standardInput, "readLine", _arguments, null, n );
-					__messages.add( message );
-				}
-			}
-			{
-				Token token_2_0 = new Token();
-				// createDHT(n)
-				{
-					Object _arguments[] = { n };
-					Message message = new Message( self, self, "createDHT", _arguments, null, token_2_0 );
-					__messages.add( message );
-				}
-				// checkForInput()
-				{
-					Object _arguments[] = {  };
-					Message message = new Message( self, self, "checkForInput", _arguments, token_2_0, null );
-					__messages.add( message );
-				}
-			}
 		}
-		public void createDHT(String n_string) {
-			int n = Integer.parseInt(n_string);
-			numNodes = (int)Math.pow(2, n);
-			Vector theaters = new Vector();
-			String theater;
-			if (theatersFile!="") {{
-				try {
-					BufferedReader in = new BufferedReader(new FileReader(theatersFile));
-					while ((theater=in.readLine())!=null) {
-						theaters.add(theater);
-					}
-					in.close();
-				}
-				catch (IOException ioe) {
-					{
-						// standardError<-println("[error] Can't open the file "+theatersFile+" for reading. Will create DHT nodes locally.")
-						{
-							Object _arguments[] = { "[error] Can't open the file "+theatersFile+" for reading. Will create DHT nodes locally." };
-							Message message = new Message( self, standardError, "println", _arguments, null, null );
-							__messages.add( message );
-						}
-					}
-					theatersFile = "";
-				}
-
-			}
-}			if (theatersFile!="") {{
-				for (int i = 0; i<numNodes; i++){
-					String uan_str = "uan://"+nameServer+"/id"+i;
-					String ual_str = "rmsp://"+theaters.get(i%theaters.size())+"/id"+i;
-					if (isDebug) {{
-						{
-							// standardOutput<-println("Creating node "+uan_str+" at "+ual_str)
-							{
-								Object _arguments[] = { "Creating node "+uan_str+" at "+ual_str };
-								Message message = new Message( self, standardOutput, "println", _arguments, null, null );
-								__messages.add( message );
-							}
-						}
-					}
-}					nodes.add(((Node)new Node(new UAN(uan_str), new UAL(ual_str),this).construct(i)));
-				}
+		public int getClosestNode(int node) {
+			return (int)connections.floorKey(node);
+		}
+		public void insert(String key, String value, int storedLocation) {
+			if (storedLocation==id) {{
+				items.put(key, value);
 			}
 }			else {{
-				for (int i = 0; i<numNodes; i++){
-					if (isDebug) {{
-						{
-							// standardOutput<-println("Creating node "+i+" locally")
-							{
-								Object _arguments[] = { "Creating node "+i+" locally" };
-								Message message = new Message( self, standardOutput, "println", _arguments, null, null );
-								__messages.add( message );
-							}
-						}
-					}
-}					nodes.add(((Node)new Node(this).construct(i)));
-				}
-			}
-}			for (int i = 0; i<numNodes; i++){
-				Map connections;
-				for (int j = 0; j<n; j++){
-					int val = (int)(i+Math.pow(2, j))%(int)Math.pow(2, n);
+				{
+					// connections.get(getClosestNode(storedLocation))<-insert(key, value, storedLocation)
 					{
-						// nodes.get(i)<-addConnection(val, nodes.get(val))
-						{
-							Object _arguments[] = { val, nodes.get(val) };
-							Message message = new Message( self, nodes.get(i), "addConnection", _arguments, null, null );
-							__messages.add( message );
-						}
-					}
-				}
-			}
-		}
-		public void checkForInput() {
-			{
-				Token token_2_0 = new Token();
-				Token token_2_1 = new Token();
-				// standardInput<-readLine()
-				{
-					Object _arguments[] = {  };
-					Message message = new Message( self, standardInput, "readLine", _arguments, null, token_2_0 );
-					__messages.add( message );
-				}
-				// handleInput(token)
-				{
-					Object _arguments[] = { token_2_0 };
-					Message message = new Message( self, self, "handleInput", _arguments, token_2_0, token_2_1 );
-					__messages.add( message );
-				}
-				// checkForInput()
-				{
-					Object _arguments[] = {  };
-					Message message = new Message( self, self, "checkForInput", _arguments, token_2_1, null );
-					__messages.add( message );
-				}
-			}
-		}
-		public void handleInput(String input) {
-			String[] tokens = input.split(" ");
-			switch (tokens[0]) {
-			case "insert": {
-				if (tokens.length<4) {{
-					{
-						// standardError<-println("[error] Usage: insert <fromNode> <key> <value>")
-						{
-							Object _arguments[] = { "[error] Usage: insert <fromNode> <key> <value>" };
-							Message message = new Message( self, standardError, "println", _arguments, null, null );
-							__messages.add( message );
-						}
-					}
-break;				}
-}				int fromNode = Integer.parseInt(tokens[1]);
-				String key = tokens[2];
-				String value = tokens[3];
-				int location = Hash(key, numNodes);
-				{
-					// nodes.get(fromNode)<-insert(key, value, location)
-					{
-						Object _arguments[] = { key, value, location };
-						Message message = new Message( self, nodes.get(fromNode), "insert", _arguments, null, null );
+						Object _arguments[] = { key, value, storedLocation };
+						Message message = new Message( self, connections.get(getClosestNode(storedLocation)), "insert", _arguments, null, null );
 						__messages.add( message );
 					}
 				}
-break;			}
-			case "query": {
-				if (tokens.length<4) {{
+			}
+}		}
+		public Object query(int queryId, String key, int storedLocation, int fromNode) {
+			if (storedLocation==id) {{
+				if (items.containsKey(key)) {{
+					String to_print = "Request "+queryId+" sent to agent: "+fromNode;
+					to_print += " Value for key \""+key+"\" stored in node: "+storedLocation;
+					to_print += " \""+items.get(key)+"\"";
 					{
-						// standardError<-println("[error] Usage: query <queryID> <fromNode> <key>")
+						// println(to_print)
 						{
-							Object _arguments[] = { "[error] Usage: query <queryID> <fromNode> <key>" };
-							Message message = new Message( self, standardError, "println", _arguments, null, null );
+							Object _arguments[] = { to_print };
+							Message message = new Message( self, self, "println", _arguments, null, null );
 							__messages.add( message );
 						}
 					}
-break;				}
-}				int queryID = Integer.parseInt(tokens[1]);
-				int fromNode = Integer.parseInt(tokens[2]);
-				String key = tokens[3];
-				int location = Hash(key, numNodes);
-				{
-					// nodes.get(fromNode)<-query(queryID, key, location, fromNode)
+					return items.get(key);
+				}
+}				else {{
 					{
-						Object _arguments[] = { queryID, key, location, fromNode };
-						Message message = new Message( self, nodes.get(fromNode), "query", _arguments, null, null );
+						// println("Query for "+key+" but not found at "+id)
+						{
+							Object _arguments[] = { "Query for "+key+" but not found at "+id };
+							Message message = new Message( self, self, "println", _arguments, null, null );
+							__messages.add( message );
+						}
+					}
+					{
+						// println("Waiting for key to be inserted...")
+						{
+							Object _arguments[] = { "Waiting for key to be inserted..." };
+							Message message = new Message( self, self, "println", _arguments, null, null );
+							__messages.add( message );
+						}
+					}
+				}
+}			}
+}			else {{
+				{
+					// connections.get(getClosestNode(storedLocation))<-query(queryId, key, storedLocation, fromNode)
+					{
+						Object _arguments[] = { queryId, key, storedLocation, fromNode };
+						Message message = new Message( self, connections.get(getClosestNode(storedLocation)), "query", _arguments, null, null );
 						__messages.add( message );
 					}
 				}
-break;			}
-			default: 			{
-				// standardError<-println("[error] Command \""+tokens[0]+"\" not recognized.")
-				{
-					Object _arguments[] = { "[error] Command \""+tokens[0]+"\" not recognized." };
-					Message message = new Message( self, standardError, "println", _arguments, null, null );
-					__messages.add( message );
-				}
 			}
-			}
+}			return "";
 		}
 		public void println(String str) {
 			{
@@ -477,13 +361,6 @@ break;			}
 					__messages.add( message );
 				}
 			}
-		}
-		public int Hash(String key, int numNodes) {
-			int sum = 0;
-			for (int i = 0; i<key.length(); i++){
-				sum += key.charAt(i);
-			}
-			return sum%numNodes;
 		}
 	}
 }

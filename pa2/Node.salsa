@@ -1,0 +1,83 @@
+module pa2;
+
+import java.io.*;
+import java.util.*;
+import java.lang.Math; 
+
+/* Node.salsa
+ *
+ * Basic node class to manage storing keys and values, and a list
+ * of addresses that this node has access to
+ */
+
+behavior Node {
+
+    private TreeMap connections = new TreeMap();
+
+    private String uan_str = "";
+    private String ual_str = "";
+    private int id;
+
+    private TreeMap items = new TreeMap();
+
+
+    Node(int i){
+        id = i;
+    }
+
+    void addConnection(int node, Node n) {
+        connections.put(node, n);
+    }
+
+    void act(String args[]) {
+        int argc = args.length;
+    }
+
+    /* Returns the id of the node that we have access to that's closest
+        to the target node */
+    int getClosestNode(int node) {
+        return (int) connections.floorKey(node);
+    }
+
+    void insert(String key, String value, int storedLocation) {
+        //println("insert(" + id + ") " + key + " " + value + " to be stored at " + storedLocation);
+        // If the key is to be stored at this location
+        if (storedLocation == id) {
+            items.put(key, value);
+        } 
+        // Otherwise we need to route this request to another node
+        else {
+            connections.get(getClosestNode(storedLocation))<-insert(key, value, storedLocation);
+        }
+    }
+
+    Object query(int queryId, String key, int storedLocation, int fromNode) {
+        //println("query (" + id + ")" + key + " is stored at: " + storedLocation);
+        // If the key was to be stored at this location
+        if (storedLocation == id) {
+            if (items.containsKey(key)) {
+                String to_print = "Request " + queryId + " sent to agent: " + fromNode;
+                to_print += " Value for key \"" + key + "\" stored in node: " + storedLocation;
+                to_print += " \"" + items.get(key) + "\"";
+                println(to_print);
+                return items.get(key);
+            } else {
+                // Here we need to wait for the key to be inserted, then respond
+                println("Query for " + key + " but not found at " + id);
+                println("Waiting for key to be inserted...");
+            }
+        } 
+        // Otherwise route the request to another location
+        else {
+            connections.get(getClosestNode(storedLocation))<-query(queryId, key, storedLocation, fromNode);
+        }
+        return "";
+    }
+
+    //Wrapper for print
+    //Used if a node wants to print to STDOUT on the I/O theater
+    void println(String str){
+        standardOutput<-println(str);
+    }
+}
+
