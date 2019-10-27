@@ -33,14 +33,22 @@ behavior Node {
         int argc = args.length;
     }
 
+    String toString() {
+        return "<Node " + id + ">";
+    }
+
     /* Returns the id of the node that we have access to that's closest
         to the target node */
     int getClosestNode(int node) {
-        return (int) connections.floorKey(node);
+        Object lower = connections.floorKey(node);
+        Object higher = connections.ceilingKey(node);
+        if (lower == null) return (int) higher;
+        if (higher == null) return (int) lower;
+        return (node - (int) lower) <= ((int) higher - node) ? (int) lower : (int) higher;
     }
 
     void insert(String key, String value, int storedLocation) {
-        //println("insert(" + id + ") " + key + " " + value + " to be stored at " + storedLocation);
+        println("insert(" + id + ") " + key + " " + value + " to be stored at " + storedLocation);
         // If the key is to be stored at this location
         if (storedLocation == id) {
             items.put(key, value);
@@ -63,6 +71,11 @@ behavior Node {
                 return items.get(key);
             } else {
                 // Here we need to wait for the key to be inserted, then respond
+                // Pause for 100 msec befor checking again
+                // try {
+                //     Thread.sleep(100);
+                // } catch (Exception e) {}
+                // this<-query(queryId, key, storedLocation, fromNode);
                 println("Query for " + key + " but not found at " + id);
                 println("Waiting for key to be inserted...");
             }
