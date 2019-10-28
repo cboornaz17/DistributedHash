@@ -10,10 +10,10 @@ import java.lang.Math;
  */
 
 behavior Main{
-  String theatersFile = "";//"theatersFile.txt";// Default location for list of theaters (1st cmd line argument)
+  String theatersFile = "";// Default location for list of theaters (1st cmd line argument)
                                                 // List of ip addr:port separated by newlines
   String nameServer = "127.0.0.1:3030";         // Default name server (2nd cmd line argument))
-  public static boolean isDebug = true;       // Additional output for debugging (set to false when testing autograding)
+  public static boolean isDebug = false;       // Additional output for debugging (set to false when testing autograding)
 
   private Vector nodes = new Vector();
   int numNodes;
@@ -82,12 +82,15 @@ behavior Main{
 
     // Initialize connections to other nodes for each node
     for (int i = 0; i < numNodes; i++) {
-      standardOutput<-println("adding connections for node " + i);
-      
+      if (isDebug) {
+        standardOutput<-println("adding connections for node " + i);
+      }
       Map connections;
       for (int j = 0; j < n; j++) {
         int val = (int) (i + Math.pow(2, j)) % (int) Math.pow(2, n);
-        standardOutput<-println("Connection to " + String.valueOf(val));
+        if (isDebug) {
+          standardOutput<-println("Connection to " + String.valueOf(val));
+        }
         nodes.get(i)<-addConnection(val, nodes.get(val));
       }
     }
