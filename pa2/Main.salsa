@@ -82,12 +82,12 @@ behavior Main{
 
     // Initialize connections to other nodes for each node
     for (int i = 0; i < numNodes; i++) {
-      //standardOutput<-println("adding connections for node " + i);
+      standardOutput<-println("adding connections for node " + i);
       
       Map connections;
       for (int j = 0; j < n; j++) {
         int val = (int) (i + Math.pow(2, j)) % (int) Math.pow(2, n);
-        //standardOutput<-println("Connection to " + String.valueOf(val));
+        standardOutput<-println("Connection to " + String.valueOf(val));
         nodes.get(i)<-addConnection(val, nodes.get(val));
       }
     }

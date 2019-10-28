@@ -2,7 +2,7 @@ module pa2;
 
 import java.io.*;
 import java.util.*;
-import java.lang.Math; 
+import java.lang.*;
 
 /* Node.salsa
  *
@@ -59,8 +59,8 @@ behavior Node {
         }
     }
 
-    Object query(int queryId, String key, int storedLocation, int fromNode) {
-        //println("query (" + id + ")" + key + " is stored at: " + storedLocation);
+    String query(int queryId, String key, int storedLocation, int fromNode) {
+        println("query (" + id + ")" + key + " is stored at: " + storedLocation);
         // If the key was to be stored at this location
         if (storedLocation == id) {
             if (items.containsKey(key)) {
@@ -68,7 +68,8 @@ behavior Node {
                 to_print += " Value for key \"" + key + "\" stored in node: " + storedLocation;
                 to_print += " \"" + items.get(key) + "\"";
                 println(to_print);
-                return items.get(key);
+                //return items.get(key);
+                return to_print;
             } else {
                 // Here we need to wait for the key to be inserted, then respond
                 // Pause for 100 msec befor checking again
