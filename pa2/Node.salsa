@@ -59,31 +59,39 @@ behavior Node {
         }
     }
 
+<<<<<<< HEAD
     String query(int queryId, String key, int storedLocation, int fromNode) {
         println("query (" + id + ")" + key + " is stored at: " + storedLocation);
+=======
+    void query(Object client, int queryId, String key, int storedLocation, int fromNode) {
+        //println("query (" + id + ")" + key + " is stored at: " + storedLocation);
+>>>>>>> 9e8ccfeded9c00619563797cc0d07bc2c8db2c3a
         // If the key was to be stored at this location
         if (storedLocation == id) {
             if (items.containsKey(key)) {
                 String to_print = "Request " + queryId + " sent to agent: " + fromNode;
                 to_print += " Value for key \"" + key + "\" stored in node: " + storedLocation;
                 to_print += " \"" + items.get(key) + "\"";
+<<<<<<< HEAD
                 println(to_print);
                 //return items.get(key);
                 return to_print;
+=======
+                client<-println(to_print);
+>>>>>>> 9e8ccfeded9c00619563797cc0d07bc2c8db2c3a
             } else {
                 // Here we need to wait for the key to be inserted, then respond
                 // Pause for 100 msec befor checking again
                 try {
                     Thread.sleep(100);
                 } catch (Exception e) {}
-                query(queryId, key, storedLocation, fromNode);
+                query(client, queryId, key, storedLocation, fromNode);
             }
         } 
         // Otherwise route the request to another location
         else {
-            connections.get(getClosestNode(storedLocation))<-query(queryId, key, storedLocation, fromNode);
+            connections.get(getClosestNode(storedLocation))<-query(client, queryId, key, storedLocation, fromNode);
         }
-        return "";
     }
 
     //Wrapper for print

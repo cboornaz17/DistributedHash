@@ -129,7 +129,7 @@ behavior Main{
         String key = tokens[3];
 
         int location = Hash(key, numNodes);
-        nodes.get(fromNode)<-query(queryID, key, location, fromNode);
+        nodes.get(fromNode)<-query(self, queryID, key, location, fromNode);
         break;
       }
       default:
