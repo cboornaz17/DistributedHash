@@ -72,12 +72,10 @@ behavior Node {
             } else {
                 // Here we need to wait for the key to be inserted, then respond
                 // Pause for 100 msec befor checking again
-                // try {
-                //     Thread.sleep(100);
-                // } catch (Exception e) {}
-                // this<-query(queryId, key, storedLocation, fromNode);
-                println("Query for " + key + " but not found at " + id);
-                println("Waiting for key to be inserted...");
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {}
+                query(queryId, key, storedLocation, fromNode);
             }
         } 
         // Otherwise route the request to another location
